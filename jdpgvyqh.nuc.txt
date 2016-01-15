@@ -1,0 +1,90 @@
+﻿This version is the first operational version.
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	new file:   articles/NLST_NEnglJMed11_NLST_trial_CT_vs_radiography.pdf
+#	new file:   articles/Postma06_EurUrol_tumor_features_ERSPC.pdf
+#	new file:   articles/Saslow_MRI guideline CA.pdf
+#	new file:   articles/Wever11_MedDecisMaking_early_detection_affect_disease_progression.pdf
+#	new file:   code/.RData
+#	new file:   code/.Rhistory
+#	new file:   code/.csv
+#	new file:   code/run_file.R
+#	new file:   code/screentreat_library.R
+#	new file:   code/user_options6.R
+#	new file:   code/user_options6Weib.R
+#	new file:   code/wrapper6.R
+#	new file:   code/wrapper6Weib.R
+#	new file:   data/CISNET_DISSEMINATION_NORACE_Feb172014.xlsx
+#	new file:   data/CISNET_Efficacy_2013_Oct1.xls
+#	new file:   data/Parameters.xlsx
+#	new file:   data/Treatment Dissemination_Pre 1997 Estimates.xls
+#	new file:   data/bc_1975-1979_incidence.csv
+#	new file:   data/bc_1975-1979_incidence.dic
+#	new file:   data/bc_1975-1979_incidence.sim
+#	new file:   data/bc_1975-1979_incidence.txt
+#	new file:   data/bc_1975-1979_incidence_by_race.csv
+#	new file:   data/bc_1975-1979_mortality.si
+#	new file:   data/bc_1975-1979_mortality.sim
+#	new file:   data/bc_1975-1979_stagefreq.dic
+#	new file:   data/bc_1975-1979_stagefreq.sf
+#	new file:   data/bc_1975-1979_stagefreq.sfm
+#	new file:   data/bc_1975-1979_stagefreq.txt
+#	new file:   data/bc_1975-1979_survival.dic
+#	new file:   data/bc_1975-1979_survival.ss
+#	new file:   data/bc_1975-1979_survival.ssm
+#	new file:   data/bc_1975-1979_survival.txt
+#	new file:   data/bc_2007-2011_mortality.si
+#	new file:   data/bc_2007-2011_mortality.sim
+#	new file:   data/bc_2010_receptorfreq.csv
+#	new file:   data/bc_2010_receptorfreq.dic
+#	new file:   data/bc_2010_receptorfreq.sf
+#	new file:   data/bc_2010_receptorfreq.sfm
+#	new file:   data/bc_2010_receptorfreq.txt
+#	new file:   data/bc_2010_receptorfreqHistStage.csv
+#	new file:   data/bc_2010_receptorfreqHistStage.sf
+#	new file:   data/bc_2010_receptorfreq_README.txt
+#	new file:   data/bc_2010_receptorfreq_summary.csv
+#	new file:   data/bc_2010_receptorfreq_summaryHistStage.csv
+#	new file:   data/bc_clinical_incidence_unformatted.csv
+#	new file:   data/elan_2014-08-29_incidence_table.csv
+#	new file:   data/elan_2014-08-29_life_table.csv
+#	new file:   data/input_temp_ERHER2_withAI.xlsx
+#	new file:   documentation/leslie_documentation/flowchart.vsd
+#	new file:   documentation/leslie_documentation/flowchart_newstyle.pdf
+#	new file:   documentation/leslie_documentation/flowchart_newstyle.vsd
+#	new file:   documentation/leslie_documentation/simulation_approach_using_covariate_distributions.docx
+#	new file:   documentation/leslie_documentation/simulation_approach_using_covariate_distributions.xlsx
+#	new file:   documentation/outline.docx
+#	new file:   examples/HypotheticalSensitivity.csv
+#	new file:   examples/Tables.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/input/input.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/input/run_file.R
+#	new file:   examples/breast_ER-HER2_6_race_testing/input/user_options.R
+#	new file:   examples/breast_ER-HER2_6_race_testing/model_info.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/output/cancer_mort_per100K.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/output/cuminc_mrr_25.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/output/cuminc_mrr_full.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/output/cuminc_mrr_newtable.csv
+#	new file:   examples/breast_ER-HER2_6_race_testing/output/cuminc_plot.pdf
+#	new file:   examples/input_temp_ERHER2.csv
+#	new file:   examples/input_temp_ERHER2_withAI.csv
+#	new file:   examples/input_temp_ERHER2_withAI_Ynames.csv
+#	new file:   examples/input_temp_ERHER2_withAI_Ynames_EarlyOnly.csv
+#	new file:   examples/input_temp_ERHER2_withAI_Ynames_Races.csv
+#	new file:   examples/input_temp_ERonly.csv
+#	new file:   examples/input_temp_hypothetical.csv
+#	new file:   examples/inputs_temp.csv
+#	new file:   run_README.txt
+#	new file:   version_guide.csv
+#	new file:   web/interface_screening.docx
+#	new file:   web/interface_screening_outline.docx
+#
+# Untracked files:
+#	il05i3c2.2vs.txt
+#
+
