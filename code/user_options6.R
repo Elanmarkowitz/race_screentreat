@@ -93,18 +93,18 @@ surv_distr = 'exponential'
 # by subgroup-stages. Subgroup stages specified here must
 # match those given in the scrtrt_file
 control_notreat <- list(
-    White = data.frame(stage=c(rep('Early',4),
-                               rep('Advanced',4)),
-                       subgroup=rep(c('ER+HER2+',
+    White = data.frame(stage=c(rep('Early',4),     # The number must match the number of subgroups
+                               rep('Advanced',4)), # The number must match the number of subgroups
+                       subgroup=rep(c('ER+HER2+',  
                                       'ER+HER2-',
                                       'ER-HER2+',
                                       'ER-HER2-'),2),
-                       mortrate=c(rep(.01992,4),rep(0.10693, 4)),
-                       prop=c(0.04, 0.38, 0.02, 0.06,
+                       mortrate=c(rep(.01992,4),rep(0.10693, 4)), 
+                       prop=c(0.04, 0.38, 0.02, 0.06,    # proportion of population in each subcategory
                               0.06, 0.34, 0.03, 0.07)),
     
-    Black = data.frame(stage=c(rep('Early',4),
-                               rep('Advanced',4)),
+    Black = data.frame(stage=c(rep('Early',4),     # The number must match the number of subgroups
+                               rep('Advanced',4)), # The number must match the number of subgroups
                        subgroup=rep(c('ER+HER2+',
                                       'ER+HER2-',
                                       'ER-HER2+',
