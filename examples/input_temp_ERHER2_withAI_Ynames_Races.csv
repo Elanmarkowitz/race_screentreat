@@ -1,8 +1,8 @@
 subgroup,stage,tx,HR_White,HR_Black,prop_White_Y1975,prop_Black_Y1999,prop_White_Y2015
 ER+HER2+,Early,None,1,1,1,0.24,0
-ER+HER2+,Early,Tamoxifen,0.7,0.7,0,0.58,0
-ER+HER2+,Early,Chemo,0.775,0.775,0,0.08,0
-ER+HER2+,Early,Tamoxifen+Chemo,0.5425,0.5425,0,0.1,0
+ER+HER2+,Early,Tamoxifen,0.7,0.8,0,0.58,0
+ER+HER2+,Early,Chemo,0.775,0.85,0,0.08,0
+ER+HER2+,Early,Tamoxifen+Chemo,0.5425,0.5,0,0.1,0
 ER+HER2+,Advanced,None,1,1,0.8,0.02,0
 ER+HER2+,Advanced,Tamoxifen,0.7,0.7,0,0.1,0
 ER+HER2+,Advanced,Chemo,0.775,0.775,0.2,0.38,0

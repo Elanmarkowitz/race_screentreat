@@ -15,8 +15,22 @@
 
 - Open input data file and fill out treatment info/make sure it's the right one
 
-- Source wrapper.R to set up (run=FALSE) or set up and run (run=TRUE) the model
+For an example of a data file with races, look at 
+examples/input_temp_ERHER2_withAI_Ynames_Races.csv
 
+Subgroups can be set to any grouping but must match the subgroups in the user_options file.
+
+Races can be any set of populations but must match the races used in user_options file.
+
+The columns of the data file must be:
+subgroups: The subgroups for the trial
+stage: must be 'Early' and 'Advanced'
+tx: The treatments. Every treatment should have a row corresponding to each subgroup-stage pair.
+HR_[Race]: At least 1 column containing the treatment HR for that race. [Race] should be replaced by the name of the race.
+Prop_[Race]_[Trial]: At least 1 column. Gives the proportion of each subgroup-stage pair that receives a given treatment. [Race] should match a [Race] from the HR columns. [Trial] is just the name for the trial (can be the same as [Race]).
+
+
+- Source wrapper.R to set up (run=FALSE) or set up and run (run=TRUE) the model
 
 
 2) Re-running the model with changes
