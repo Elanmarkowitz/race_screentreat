@@ -126,5 +126,5 @@ ocd_HR = 1
 # Run model
 ############################################################
 
-source(file.path(rootdir, '/screentreat/code/run_file.R'))
+source(file.path(rootdir, 'race_screentreat/code/run_file.R'))
 

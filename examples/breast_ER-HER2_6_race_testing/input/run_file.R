@@ -35,10 +35,9 @@ for (i in trials){
 }
 
 # Identify subgroups
-subgroups <- list()
-for (i in races){
-    subgroups[[i]] = as.character(unique(control_notreat[[i]]$subgroup))
-}
+subgroups <- as.character(unique(control_notreat[[races[1]]]$subgroup))
+
+
 # Prepare numeric and text group IDs:
 # First for stage-subgroups (SS)
 for (i in races){
@@ -105,21 +104,23 @@ ageOC <- calc_ac_lifespan_pop(popdata=pop_chars,
                                 survHR=ocd_HR) 
 
 # Age at clinical incidence
-if (!age_is_ageclin) {
-
-    # Format the incidence data
-    inc_data <- format_clinical_incidence_with_race(incidence_file, races)
-
-    # Simulate
-    ageclin <- list()
-    for (i in races){
+ageclin <- list()
+for (i in races){
+    if (!age_is_ageclin) {
+    
+        # Format the incidence data
+        inc_data <- format_clinical_incidence_for_race(incidence_file, i)
+    
+        # Simulate
+        
         ageclin[[i]] <- sim_clinical_incidence(popdata=pop_chars,
                                                bootrows=pop_chars_rows,
-                                               incidence=transform(inc_data, incidence_free_survival = paste0() ),
+                                               incidence=inc_data,
                                                results_as_matrix=TRUE)
+    } 
+    else {
+        ageclin[[i]] <- ageentry
     }
-} else {
-    ageclin <- ageentry
 }
 
 ############################################################
@@ -144,30 +145,33 @@ for (i in races){
 # We can still refer to control_notreat, but now we will 
 # have a distribution of rows shifted towards the early 
 # stages
-for (i in races)
+screen_notreat_rows <- list()
+shift <- list()
+adv_cases <- list()
+for (i in races){
     # First, identify Early-Advanced stage row pairs within
     # subgroups
     stage_pairs <- sapply(subgroups, function(x, df) which(df$subgroup==x), 
-                          control_notreat)
-    dimnames(stage_pairs) <- list(control_notreat$stage[stage_pairs[,1]],
+                          control_notreat[[i]])
+    dimnames(stage_pairs) <- list(control_notreat[[i]]$stage[stage_pairs[,1]],
                                   subgroups)
     
     # Now, for each subgroup, use the HR_advanced stage-shift 
     # parameter to determine whether a person gets shifted 
     # (1=yes, 0=no). We will generate this for everyone, but we
     # will only use it for the advanced stage cases.
-    shift <- matrix(rbinom(nsim*pop_size, 1, prob=1-HR_advanced),
+    shift[[i]] <- matrix(rbinom(nsim*pop_size, 1, prob=1-HR_advanced[i]),
                     nrow=pop_size, ncol=nsim)
     
     # Shift stage
-    screen_notreat_rows <- control_notreat_rows
+    screen_notreat_rows[[i]] <- control_notreat_rows[[i]]
     for (s in subgroups) {
-        adv_cases <- screen_notreat_rows==stage_pairs['Advanced',s]
-        screen_notreat_rows[adv_cases & shift==1] <- 
+        adv_cases[[i]] <- screen_notreat_rows[[i]]==stage_pairs['Advanced',s]
+        screen_notreat_rows[[i]][adv_cases[[i]] & shift[[i]]==1] <- 
             stage_pairs['Early',s]
         #Check result: table(screen_notreat_rows[adv_cases])
     }
-
+}
 ############################################################
 # Simulate treatment received in control and screening
 # arms
@@ -177,17 +181,17 @@ cat('\nSimulating treatment received...')
 # For control arms first
 # For each trial, simulate treatment (referring to treat_chars)
 # by stage-subgroups
-control_treatments <- sapply_withnames(trials, funX=function(
+control_treatments <- sapply_withnames(1:length(trials), funX=function(
                           x, 
                           control_notreat_rows,
                           treat_chars,
                           pop_size,
                           nsim) {
                             # Define which trial's proportions to use
-                            thisprop <- paste('prop', x, sep='_')
+                            thisprop <- paste('prop', trials[x], sep='_')
                             treat_results <- 
-                                sim_treatment_by_subgroup(treat_chars,
-                                                          control_notreat_rows,
+                                sim_treatment_by_subgroup(treat_chars[[trial_race[x]]],
+                                                          control_notreat_rows[[trial_race[x]]],
                                                           thisprop,
                                                           pop_size,
                                                           nsim)
@@ -196,46 +200,54 @@ control_treatments <- sapply_withnames(trials, funX=function(
                          treat_chars,
                          pop_size, 
                          nsim)
+names(control_treatments) <- trials
 
 # For screening arms, we need to change treatment only for those
 # who got stage shifted, so shift==1 and stage==Advanced. 
 
 # First create indicator of needing to change treatment
-shift_treatment <- shift==1 & 
-                   control_notreat_rows%in%stage_pairs['Advanced',]
+shift_treatment <- list()
+for (i in races){
+    shift_treatment[[i]] <- shift[[i]]==1 & 
+                       control_notreat_rows[[i]]%in%stage_pairs['Advanced',]
+}
 # indicator for those not changing treatment but still benefitting from screening
-shift_instage_early <- control_notreat_rows%in%stage_pairs['Early',]
-shift_instage_advanced <- shift==0 & 
-  control_notreat_rows%in%stage_pairs['Advanced',]
+shift_instage_early <- list()
+shift_instage_advanced <- list()
+for (i in races){
+    shift_instage_early[[i]] <- control_notreat_rows[[i]]%in%stage_pairs['Early',]
+    shift_instage_advanced[[i]] <- shift[[i]]==0 & 
+      control_notreat_rows[[i]]%in%stage_pairs['Advanced',]
+}
 
 # Now get new treatment assignments for all early-stage cases
-screen_treatments <- sapply_withnames(trials, funX=function(
+screen_treatments <- sapply_withnames(1:length(trials), funX=function(
                           x, 
                           screen_notreat_rows,
                           treat_chars,
                           pop_size,
                           nsim) {
                             # Define which trial's proportions to use
-                            thisprop <- paste('prop', x, sep='_')
+                            thisprop <- paste('prop', trials[x], sep='_')
                             treat_results <- 
-                                sim_treatment_by_subgroup(treat_chars,
-                                                          screen_notreat_rows,
+                                sim_treatment_by_subgroup(subset(treat_chars[[trial_race[x]]], stage=='Early'),
+                                                          screen_notreat_rows[[trial_race[x]]],
                                                           thisprop,
                                                           pop_size,
                                                           nsim)
                          }, 
                          screen_notreat_rows, 
-                         subset(treat_chars, stage=='Early'),
+                         treat_chars,
                          pop_size, 
                          nsim)
 
 # Replace screen_treatments with control_treatments for non-shifted 
 # early-stage cases
-for (t in trials) {
-    screen_treatments[[t]][!shift_treatment] <- 
-        control_treatments[[t]][!shift_treatment]
+for (t in 1:length(trials)) {
+    screen_treatments[[t]][!shift_treatment[[trial_race[t]]]] <- 
+        control_treatments[[t]][!shift_treatment[[trial_race[t]]]]
 }
-
+names(screen_treatments) <- trials
 
 ############################################################
 # Simulate time from ageclin to cancer death 
@@ -244,13 +256,17 @@ for (t in trials) {
 cat('\nSimulating mortality...')
 
 if (surv_distr=='exponential') {
-    # Baseline mortality rates by stage-subgroup
-    control_baserate <- return_value_from_id(id=control_notreat_rows, 
-                                         df=control_notreat,
-                                         value='mortrate')
-    screen_baserate <- return_value_from_id(id=screen_notreat_rows, 
-                                         df=control_notreat,
-                                         value='mortrate')
+    control_baserate <- list()
+    screen_baserate <- list()
+    for (i in races){
+        # Baseline mortality rates by stage-subgroup
+        control_baserate[[i]] <- return_value_from_id(id=control_notreat_rows[[i]],
+                                                      df=control_notreat[[i]],
+                                                      value='mortrate')
+        screen_baserate[[i]] <- return_value_from_id(id=screen_notreat_rows[[i]],
+                                                      df=control_notreat[[i]],
+                                                      value='mortrate')
+    }
 } else if (surv_distr=='weibull') {
 
     # Helper function: given paramaters for a weibull distribution and a hazard ratio, 
@@ -259,62 +275,79 @@ if (surv_distr=='exponential') {
       return(scale/(RR^(1/shape)))
     }
 
-    #Baseline mortality weibull paramaters by stage-subgroup
-    control_baseshape <- return_value_from_id(id=control_notreat_rows, 
-                                              df=control_notreat,
-                                              value='mortshape')
-    screen_baseshape <- return_value_from_id(id=screen_notreat_rows, 
-                                             df=control_notreat,
-                                             value='mortshape')
-    control_basescale <- return_value_from_id(id=control_notreat_rows, 
-                                              df=control_notreat,
-                                              value='mortscale')
-    screen_basescale <- return_value_from_id(id=screen_notreat_rows, 
-                                             df=control_notreat,
-                                             value='mortscale')
+    control_baseshape <- list()
+    screen_baseshape <- list()
+    control_basescale <- list()
+    screen_basescale <- list()
+    for (i in races){
+        #Baseline mortality weibull paramaters by stage-subgroup
+        control_baseshape <- return_value_from_id(id=control_notreat_rows[[i]], 
+                                                  df=control_notreat[[i]],
+                                                  value='mortshape')
+        screen_baseshape <- return_value_from_id(id=screen_notreat_rows[[i]], 
+                                                 df=control_notreat[[i]],
+                                                 value='mortshape')
+        control_basescale <- return_value_from_id(id=control_notreat_rows[[i]], 
+                                                  df=control_notreat[[i]],
+                                                  value='mortscale')
+        screen_basescale <- return_value_from_id(id=screen_notreat_rows[[i]], 
+                                                 df=control_notreat[[i]],
+                                                 value='mortscale')
+    }
 }
 
 # Treatment HRs
 HR_cols <- paste0("HR_", trial_race)
 names(HR_cols) <- trials
-control_HRs <- sapply_withnames(names(control_treatments), 
+control_HRs <- sapply_withnames(trials, 
                                 funX=return_value_from_id_by_race,
                                 control_treatments,
-                                treat_chars, 
+                                treat_chars[[trial_race[1]]], 
                                 HR_cols)
-screen_HRs <- sapply_withnames(names(screen_treatments), 
+screen_HRs <- sapply_withnames(trials, 
                                funX=return_value_from_id_by_race,
                                screen_treatments,
-                               treat_chars, 
+                               treat_chars[[trial_race[1]]], 
                                HR_cols)
+
+
+
 
 # add within stage benefit to screen_HRs using shift_instage
 for (t in trials) {
-  screen_HRs[[t]][shift_instage_early] <- 
-    (screen_HRs[[t]][shift_instage_early])*instage_screen_benefit_early
-  screen_HRs[[t]][shift_instage_advanced] <- 
-    (screen_HRs[[t]][shift_instage_advanced])*instage_screen_benefit_advanced
+  screen_HRs[[t]][shift_instage_early[[trial_race[t]]]] <- 
+    (screen_HRs[[t]][shift_instage_early[[trial_race[t]]]])*instage_screen_benefit_early
+  screen_HRs[[t]][shift_instage_advanced[[trial_race[t]]]] <- 
+    (screen_HRs[[t]][shift_instage_advanced[[trial_race[t]]]])*instage_screen_benefit_advanced
 }
 
 
 if (surv_distr=='exponential') {
     # Final mortality rate
-    control_rate <- sapply_withnames(control_HRs, 
-                                     funX=function(x, rate) { x*rate }, 
-                                     control_baserate)
-    screen_rate <- sapply_withnames(screen_HRs, 
-                                    funX=function(x, rate) { x*rate }, 
-                                    screen_baserate)
+    control_rate <- sapply_withnames(trials, 
+                                     funX=function(x, rate, HR, race) { rate[[race[x]]] * HR[[x]] }, 
+                                     control_baserate,
+                                     control_HRs,
+                                     trial_race)
+    screen_rate <- sapply_withnames(trials, 
+                                    funX=function(x, rate, HR, race) { rate[[race[x]]] * HR[[x]] }, 
+                                    screen_baserate,
+                                    screen_HRs,
+                                    trial_race)
 } else if (surv_distr=='weibull') {
     # Final mortality scale parameter
-    control_scale <- sapply_withnames(control_HRs, 
-                                      funX=function(x, shape, scale){weibRRcalc(shape, scale, x)}, 
+    control_scale <- sapply_withnames(trials, 
+                                      funX=function(x, shape, scale, HR, race){weibRRcalc(shape[[race[x]]], scale[[race[x]]], HR[[x]])}, 
                                       control_baseshape,
-                                      control_basescale)
-    screen_scale <- sapply_withnames(screen_HRs, 
-                                     funX=function(x, shape, scale){weibRRcalc(shape, scale, x)}, 
+                                      control_basescale,
+                                      control_HRs,
+                                      trial_race)
+    screen_scale <- sapply_withnames(trials, 
+                                     funX=function(x, shape, scale, HR, race){weibRRcalc(shape[[race[x]]], scale[[race[x]]], HR[[x]])}, 
                                      screen_baseshape,
-                                     screen_basescale)
+                                     screen_basescale,
+                                     screen_HRs,
+                                     trial_race)
 }
 
 # Simulate time from ageclin to cancer death for the 1st control group
@@ -385,12 +418,16 @@ if (lead_time) {
 cat('\nTabulating results...')
 
 # Age at cancer death
-control_ageCD <- sapply_withnames(control_clin2cd, 
-                                  funX=function(x, ageclin) { x + ageclin }, 
-                                  ageclin)
-screen_ageCD <- sapply_withnames(screen_clin2cd, 
-                                 funX=function(x, ageclin) {x + ageclin }, 
-                                 ageclin)
+control_ageCD <- sapply_withnames(trials, 
+                                  funX=function(x, clin2cd, ageclin, race) { clin2cd[[x]] + ageclin[[trial_race[x]]] }, 
+                                  control_clin2cd,
+                                  ageclin,
+                                  trial_race)
+screen_ageCD <- sapply_withnames(trials, 
+                                 funX=function(x, clin2cd, ageclin, race) { clin2cd[[x]] + ageclin[[trial_race[x]]] }, 
+                                 screen_clin2cd,
+                                 ageclin,
+                                 trial_race)
 
 # Time from study start to cancer death
 control_ttcd <- sapply_withnames(control_ageCD, 

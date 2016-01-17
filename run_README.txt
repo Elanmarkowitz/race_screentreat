@@ -29,6 +29,7 @@ tx: The treatments. Every treatment should have a row corresponding to each subg
 HR_[Race]: At least 1 column containing the treatment HR for that race. [Race] should be replaced by the name of the race.
 Prop_[Race]_[Trial]: At least 1 column. Gives the proportion of each subgroup-stage pair that receives a given treatment. [Race] should match a [Race] from the HR columns. [Trial] is just the name for the trial (can be the same as [Race]).
 
+Currently unable to specify differnt other cause death rates.
 
 - Source wrapper.R to set up (run=FALSE) or set up and run (run=TRUE) the model
 
