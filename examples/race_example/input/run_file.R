@@ -740,63 +740,64 @@ cat('\nComputing statistics for validation...')
 
 # Return age-specific mortality rates for each arm and trial
 # We'll ignore confidence intervals
-
-control_mortrates <- sapply_withnames(trials,
-                                   funX=function(x,
-                                                 ageentry,
-                                                 control_ttd,
-                                                 control_ageCD) {
-                                       data.frame(
-                                           Trial=x,
-                                           Arm='Control',
-                                           age_specific_eventrate(
-                                                     ageentry, 
-                                                     control_ttd[[x]],
-                                                     control_ageCD[[x]]))
-                                   }, 
-                                   ageentry,
-                                   control_ttd,
-                                   control_ageCD)
-screen_mortrates <- sapply_withnames(trials,
-                                   funX=function(x,
-                                                 ageentry,
-                                                 screen_ttd,
-                                                 screen_ageCD) {
-                                       data.frame(
-                                           Trial=x,
-                                           Arm='Screen',
-                                           age_specific_eventrate(
-                                                     ageentry, 
-                                                     screen_ttd[[x]],
-                                                     screen_ageCD[[x]]))
-                                   }, 
-                                   ageentry,
-                                   screen_ttd,
-                                   screen_ageCD)
-
-historic_incidence <- data.frame(Trial='Historical', 
-                             Arm='Incidence', 
-                             age_specific_eventrate(ageentry, 
-                                                    control_ttd[[1]],
-                                                    ageclin,
-                                                    equals=FALSE))
-historic_prevalence <- data.frame(Trial='Historical', 
-                             Arm='Prevalence', 
-                             age_specific_eventrate(ageentry, 
-                                                    control_ttd[[1]],
-                                                    ageclin,
-                                                    equals=FALSE,
-                                                    prevalence=TRUE))
-mortrates <- do.call('rbind', c(control_mortrates, screen_mortrates))
-mortrates <- rbind(mortrates, historic_incidence, historic_prevalence)
-mortrates_wide <- cast(mortrates, Trial + Age.Group ~ Arm, value='Rate')
-
-# Save
-write.csv(mortrates_wide,
-          file.path(base_path, model_version, 'output', 
-                    'cancer_mort_per100K.csv'),
-          row.names=FALSE)
-
+# 
+# control_mortrates <- sapply_withnames(trials,
+#                                    funX=function(x,
+#                                                  ageentry,
+#                                                  control_ttd,
+#                                                  control_ageCD) {
+#                                        data.frame(
+#                                            Trial=x,
+#                                            Arm='Control',
+#                                            age_specific_eventrate(
+#                                                      ageentry, 
+#                                                      control_ttd[[x]],
+#                                                      control_ageCD[[x]]))
+#                                    }, 
+#                                    ageentry,
+#                                    control_ttd,
+#                                    control_ageCD)
+# screen_mortrates <- sapply_withnames(trials,
+#                                    funX=function(x,
+#                                                  ageentry,
+#                                                  screen_ttd,
+#                                                  screen_ageCD) {
+#                                        data.frame(
+#                                            Trial=x,
+#                                            Arm='Screen',
+#                                            age_specific_eventrate(
+#                                                      ageentry, 
+#                                                      screen_ttd[[x]],
+#                                                      screen_ageCD[[x]]))
+#                                    }, 
+#                                    ageentry,
+#                                    screen_ttd,
+#                                    screen_ageCD)
+# 
+# historic_incidence <- data.frame(Trial='Historical', 
+#                              Arm='Incidence', 
+#                              age_specific_eventrate(ageentry, 
+#                                                     control_ttd[[1]],
+#                                                     ageclin,
+#                                                     equals=FALSE))
+# 
+# historic_prevalence <- data.frame(Trial='Historical', 
+#                              Arm='Prevalence', 
+#                              age_specific_eventrate(ageentry, 
+#                                                     control_ttd[[1]],
+#                                                     ageclin,
+#                                                     equals=FALSE,
+#                                                     prevalence=TRUE))
+# mortrates <- do.call('rbind', c(control_mortrates, screen_mortrates))
+# mortrates <- rbind(mortrates, historic_incidence, historic_prevalence)
+# mortrates_wide <- cast(mortrates, Trial + Age.Group ~ Arm, value='Rate')
+# 
+# # Save
+# write.csv(mortrates_wide,
+#           file.path(base_path, model_version, 'output', 
+#                     'cancer_mort_per100K.csv'),
+#           row.names=FALSE)
+# 
 ############################################################
 # Validate model: Mean survivals
 ############################################################

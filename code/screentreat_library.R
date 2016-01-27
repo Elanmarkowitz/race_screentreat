@@ -634,3 +634,15 @@ mean_matrix_subgroup = function# Return the mean of a numeric matrix
     return(mean(mmatrix[subset]))
 }
 
+
+
+
+
+
+
+
+
+
+
+
+

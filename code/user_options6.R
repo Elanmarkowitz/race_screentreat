@@ -13,22 +13,32 @@
 # Establish model version if this file is not being called 
 # by a wrapper
 ############################################################
-# TODO
+# Use if not using a wrapper
 if (!'using_wrapper'%in%ls()) {
     warning('Empyting the workspace')
     rm(list=ls())
-    model_version <- 'breast_ER-HER2_6'
-    base_path <- '~/screentreat/examples'
+    
+    # SET THE FOLLOWING 4 INPUTS IF NOT USING WRAPPER
+    model_type <- 'race_screentreat'                                # model to use
+    model_version <- 'race_example'                                 # name of specific run
+    rootdir <- 'C:/Users/Elan/Documents/GitHub'                     # directory containing model (race_screentreat)
+    input_data_file <- 'input_temp_ERHER2_withAI_Ynames_Races.csv'  # input file name, stored in the examples subfolder of the model directory
+    
+    setwd(file.path(rootdir, model_type, 'code'))
+    source('no_wrapper_lib.R')
+    base_path <- file.path(rootdir, model_type, 'examples')
+    set_up_no_wrapper(model_type, model_version, rootdir, input_data_file, base_path)
+    treat_file = file.path(base_path, input_data_file)
 }
 
 ############################################################
 # Input data files
 ############################################################
-
-treat_file = file.path(base_path, model_version, 'input', 'input.csv')
+if(!'treat_file'%in%ls())
+  treat_file = file.path(base_path, model_version, 'input', 'input.csv') 
 incidence_file = file.path(rootdir, 'race_screentreat/data/bc_1975-1979_incidence_by_race.csv')
 library_file = file.path(rootdir, 'race_screentreat/code/screentreat_library.R')
-#life_table_file = '~/cantrance/diagnostics/data/life_table_Reed2012.csv'
+life_table_file = '' #specify a file if you do not wish to use cantrance defaults
 
 ############################################################
 # Simulation features
